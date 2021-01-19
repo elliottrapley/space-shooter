@@ -101,7 +101,7 @@ class Player(Ship):
     def __init__(self, x, y, health=100):
         super().__init__(x, y, health)  # Super to instruct to use Ship() initialisation method
         self.ship_img = YELLOW_SPACESHIP
-        self.laser_img = GREEN_LASER
+        self.laser_img = YELLOW_LASER
         self.mask = pygame.mask.from_surface(self.ship_img)  # Tells us where the pixels are for the ship
         self.max_health = health  # Used to decrement the players health
 
@@ -230,7 +230,8 @@ def main():
             if event.type == pygame.QUIT:  # Checks if the user has closed the screen.
                 game_start = False  # Terminate the game.
 
-        keys = pygame.key.get_pressed()  # Method to detect key press
+                # Key Mapping
+        keys = pygame.key.get_pressed() 
         if keys[pygame.K_UP] and player.y - player_velocity > 0:
             player.y -= player_velocity  # Move 1 pixel upwards
         if keys[pygame.K_DOWN] and player.y + player_velocity + player.get_height() + 20 < HEIGHT:
@@ -250,9 +251,9 @@ def main():
 
             if random.randrange(0, 4 * 60) == 1:
                 enemy.shoot()
-
-            if collide(enemy, player):
-                player.health -= 25
+                # If a collision occurs between player and enemy, reduce player health by 10 and remove the enemy.
+            if collide(enemy, player): 
+                player.health -= 10
                 enemies.remove(enemy)
 
             if enemy.y + enemy.get_height() > HEIGHT:
@@ -268,7 +269,7 @@ def main_menu():
 
     while game_start:
         GAME_WINDOW.blit(BACKGROUND, (0, 0))
-        title_label = title_font.render("Press a mouse button to begin...", 1, (255, 255, 255))
+        title_label = title_font.render("Click mouse to begin...", 1, (255, 255, 255))
         GAME_WINDOW.blit(title_label, (WIDTH / 2 - title_label.get_width() / 2, 350))
         pygame.display.update()
 
