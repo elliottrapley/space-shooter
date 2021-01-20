@@ -168,6 +168,7 @@ def main():
     player_lives = 3
     main_game_font = pygame.font.SysFont("comicsans", 50)
     game_over_font = main_game_font = pygame.font.SysFont("comicsans", 60)
+    player_win_font = main_game_font = pygame.font.SysFont("comicsans", 60)
 
     enemies = []  # Stores where the enemies are
     wave_length = 5
@@ -181,7 +182,11 @@ def main():
 
     game_over = False
 
+    player_win = False
+
     game_over_counter = 0
+
+    player_win_counter = 0
 
     # Function inside main() function so we can use local variables instead of having to pass arguments.
     def redraw_window():
@@ -192,12 +197,17 @@ def main():
         GAME_WINDOW.blit(lives_label, (10, 10))  # Print the amount of lives onto the left-hand corner of the screen.
         GAME_WINDOW.blit(level_label, (WIDTH - level_label.get_width() - 10,
                                        10))  # Print the current game level onto the right-hand corner of the screen.
-
         for enemy in enemies:
             enemy.draw(GAME_WINDOW)
 
         player.draw(GAME_WINDOW)
 
+        # Player wins message
+        if player_win == True:
+            player_win_label = player_win_font.render("You win! Congratulations!", 1, (255, 255, 255))
+            GAME_WINDOW.blit(player_win_label, (WIDTH / 2 - player_win_label.get_width() / 2, 350))           
+
+        # Player loses message
         if game_over == True:
             game_over_label = game_over_font.render("You lose. GAME OVER", 1, (255, 255, 255))
             GAME_WINDOW.blit(game_over_label, (WIDTH / 2 - game_over_label.get_width() / 2, 350))
@@ -208,12 +218,24 @@ def main():
         clock.tick(FPS)  # Keeps the game running consistently on different systems.
         redraw_window()
 
+        # Checks if the players lives is less-than or equal to 0 or if the player's health bar is less-than or equal to 0.
         if player_lives <= 0 or player.health <= 0:
             game_over = True
             game_over_counter += 1
 
         if game_over:
             if game_over_counter > FPS * 3:
+                game_start = False
+            else:
+                continue
+
+        # Checks if the player has completed game level 3 and wins
+        if game_level == 3:
+            player_win = True
+            player_win_counter += 1
+
+        if player_win:
+            if player_win_counter > FPS * 3:
                 game_start = False
             else:
                 continue
@@ -262,7 +284,6 @@ def main():
 
         player.move_lasers(-laser_velocity, enemies)  # Check if laser has collided with enemies.
 
-
 def main_menu():
     title_font = pygame.font.SysFont("comicsans", 70)
     game_start = True
@@ -273,7 +294,7 @@ def main_menu():
         GAME_WINDOW.blit(title_label, (WIDTH / 2 - title_label.get_width() / 2, 350))
         pygame.display.update()
 
-        for event in pygame.event.get():
+        for event in pygame.event.get():            
             if event.type == pygame.QUIT:
                 game_start = False
             if event.type == pygame.MOUSEBUTTONDOWN:
